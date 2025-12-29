@@ -329,10 +329,12 @@ class TrackProgress: NSObject {
                         && !line.contains(" at ") && !line.contains(" from ") {
                         
                         do {
-                            let installerRegEx = try NSRegularExpression(pattern: "^.{0,27}")
+                            let installerRegEx = try NSRegularExpression(
+                                pattern: #"(?:^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:[+-]\d{2}:\d{2})?\s+)|(?:^[A-Za-z]{3}\s+\d{1,2}\s+\d{4}\s+\d{2}:\d{2}:\d{2}\s[+-]\d{4}\s+)"#
+                            )
                             let status = installerRegEx.stringByReplacingMatches(in: line,
-                                                                                 options: NSRegularExpression.MatchingOptions.anchored,
-                                                                                 range: NSMakeRange(0, line.count),
+                                                                                 options: [],
+                                                                                 range: NSRange(location: 0, length: line.utf16.count),
                                                                                  withTemplate: "").trimmingCharacters(in: .whitespacesAndNewlines)
                             statusText = status
                         } catch {
