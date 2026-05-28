@@ -1,3 +1,11 @@
+# Continued in this fork
+
+This fork ([kevinmcox/DEPNotify](https://github.com/kevinmcox/DEPNotify)) continues active maintenance of DEPNotify after Jamf marked it deprecated in 2021. It targets modern macOS (11.0+), produces a universal binary (arm64 + x86_64), and adds support for parsing Munki 7 logs.
+
+**Current release: 1.1.8.** See [CHANGELOG](CHANGELOG.md) for the full history of changes in this fork.
+
+This fork does not publish prebuilt binaries — see [Build from source](#build-from-source) below. The original upstream project and its deprecation notice are preserved below for historical context.
+
 # DEPNotify Deprecation
 DEPNotify is pretty old at this point and it's not getting updated very often. As a result you should look for a different solution.
 
@@ -11,7 +19,7 @@ DEPNotify is a small light weight notification app that was designed to let your
 
 # Table of Contents
 
-* [**Download**](#download)
+* [**Build from source**](#build-from-source)
 * [**Basic Usage**](#basic-usage)
 * [**Application Flags**](#application-flags)
 * [**Commands**](#commands)
@@ -30,11 +38,27 @@ DEPNotify is a small light weight notification app that was designed to let your
 * [**Changelog**](#changelog)
 * [**Notes**](#notes)
 
-# Download
+# Build from source
 
-Get the latest version, visit our releases page: [DEPNotify Releases](https://github.com/jamf/DEPNotify/releases) 
+Requirements: Xcode 13 or later, macOS 11.0 or later.
 
-(Historical release archive: [GitLab DEPNotify tags](https://gitlab.com/Mactroll/DEPNotify/-/releases))
+```bash
+git clone https://github.com/kevinmcox/DEPNotify.git
+cd DEPNotify
+xcodebuild -project DEPNotify.xcodeproj \
+  -scheme DEPNotify \
+  -configuration Release \
+  ARCHS="arm64 x86_64" \
+  ONLY_ACTIVE_ARCH=NO \
+  CODE_SIGNING_ALLOWED=NO \
+  build
+```
+
+The built `.app` will be in Xcode's DerivedData folder — the build output prints the full path. Drag it to `/Applications/Utilities/` (or wherever you want it).
+
+For distribution within your organization, you will need to sign with your own Developer ID Application certificate, notarize via your own Apple Account, and optionally wrap into a `.pkg` for MDM deployment.
+
+(Historical release archive of pre-1.1.8 versions: [Jamf DEPNotify Releases](https://github.com/jamf/DEPNotify/releases), [GitLab DEPNotify tags](https://gitlab.com/Mactroll/DEPNotify/-/releases))
 
 # Basic Usage
 
