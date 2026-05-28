@@ -87,7 +87,7 @@ class TrackProgress: NSObject {
         let outputHandle = pipe.fileHandleForReading
         outputHandle.waitForDataInBackgroundAndNotify()
         
-        var dataAvailable : NSObjectProtocol!
+        var dataAvailable: NSObjectProtocol?
         dataAvailable = NotificationCenter.default.addObserver(forName: NSNotification.Name.NSFileHandleDataAvailable,
                                                                object: outputHandle, queue: nil) {  notification -> Void in
                                                                 let data = pipe.fileHandleForReading.availableData
@@ -97,16 +97,18 @@ class TrackProgress: NSObject {
                                                                         self.processCommands(commands: str as String)
                                                                     }
                                                                     outputHandle.waitForDataInBackgroundAndNotify()
-                                                                } else {
-                                                                    NotificationCenter.default.removeObserver(dataAvailable)
+                                                                } else if let observer = dataAvailable {
+                                                                    NotificationCenter.default.removeObserver(observer)
                                                                 }
         }
-        
-        var dataReady : NSObjectProtocol!
+
+        var dataReady: NSObjectProtocol?
         dataReady = NotificationCenter.default.addObserver(forName: Process.didTerminateNotification,
                                                            object: pipe.fileHandleForReading, queue: nil) { notification -> Void in
                                                             NSLog("Task terminated!")
-                                                            NotificationCenter.default.removeObserver(dataReady)
+                                                            if let observer = dataReady {
+                                                                NotificationCenter.default.removeObserver(observer)
+                                                            }
         }
         
         task.launch()
