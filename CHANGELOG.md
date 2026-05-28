@@ -1,3 +1,11 @@
+# [1.1.8] - May 27, 2026
+
+**Added:**
+* Support for parsing Munki 7 log lines. Munki 7 switched its log timestamp prefix from Munki 6's `Aug 15 2024 17:30:32 -0500` style to RFC 3339 / ISO 8601 (`2024-12-29 16:02:05.123-08:00`), which the previous fixed-width 27-character timestamp strip didn't handle. DEPNotify now parses both formats — including UTC `Z` offsets (e.g. UK during GMT, Iceland, machines explicitly set to UTC) and non-English month abbreviations — and works across all time zones and macOS locales.
+
+**Changed:**
+* Minimum supported macOS bumped to **11.0 (Big Sur)**. The old 10.12 deployment target was below Xcode 26's supported minimum and forced the Swift standard libraries to be embedded in the bundle (~14 MB of dead weight, since Swift has shipped in the OS since 10.14.4). Result: bundle size drops from ~15 MB to ~1.5 MB.
+
 # [1.1.7] - Mar 7, 2021
 
 **Added:**

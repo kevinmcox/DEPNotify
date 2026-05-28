@@ -330,7 +330,7 @@ class TrackProgress: NSObject {
                         
                         do {
                             let installerRegEx = try NSRegularExpression(
-                                pattern: #"(?:^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:[+-]\d{2}:\d{2})?\s+)|(?:^[A-Za-z]{3}\s+\d{1,2}\s+\d{4}\s+\d{2}:\d{2}:\d{2}\s[+-]\d{4}\s+)"#
+                                pattern: #"(?:^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?\s+)|(?:^\S+\s+\d{1,2}\s+\d{4}\s+\d{2}:\d{2}:\d{2}\s[+-]\d{2}:?\d{2}\s+)"#
                             )
                             let status = installerRegEx.stringByReplacingMatches(in: line,
                                                                                  options: [],
