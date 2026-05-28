@@ -10,7 +10,7 @@ import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-    
+
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
 
@@ -28,7 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //        }
 
         // wait until the Dock is running. We should do this via KVO, but it's not all there in Swift yet
-        
+
         var dockRunning = 0
         let ws = NSWorkspace.shared
 
@@ -43,6 +43,4 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to tear down your application
     }
 
-
 }
-

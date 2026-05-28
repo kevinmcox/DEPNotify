@@ -13,12 +13,12 @@ import SecurityInterface.SFChooseIdentityPanel
 
 @available(macOS 10.12, *)
 class WebViewController: NSViewController {
-    
+
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var doneButton: NSButton!
     var urlString: String?
     var panel: SFChooseIdentityPanel?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         if let url = URL.init(string: urlString ?? "https://www.apple.com") {
@@ -26,12 +26,12 @@ class WebViewController: NSViewController {
             webView.load(URLRequest.init(url: url))
         }
     }
-    
+
     @IBAction func clickDone(_ sender: Any) {
         writeBomFile()
         self.view.window?.close()
     }
-    
+
     func writeBomFile() {
         let bomFile = "/var/tmp/com.depnotify.webview.done"
         // Create Registration complete bom file
@@ -43,11 +43,11 @@ class WebViewController: NSViewController {
 }
 
 extension WebViewController: WKNavigationDelegate {
-    
+
     func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        
+
         print("Challenge received...")
-        
+
         switch challenge.protectionSpace.authenticationMethod {
         case NSURLAuthenticationMethodNTLM:
             print("Request for NTLM authentication")
@@ -78,18 +78,18 @@ extension WebViewController: WKNavigationDelegate {
 }
 
 extension WebViewController {
-    
+
     func pickCert() -> SecIdentity? {
         panel = SFChooseIdentityPanel.shared()
-        
-        var searchReturn: AnyObject? = nil
-        
-        let identitySearchDict: [String:AnyObject] = [
+
+        var searchReturn: AnyObject?
+
+        let identitySearchDict: [String: AnyObject] = [
             kSecClass as String: kSecClassIdentity,
             kSecReturnRef as String: true as AnyObject,
-            kSecMatchLimit as String : kSecMatchLimitAll as AnyObject
+            kSecMatchLimit as String: kSecMatchLimitAll as AnyObject
         ]
-        
+
         let err = SecItemCopyMatching(identitySearchDict as CFDictionary, &searchReturn)
         if searchReturn != nil && err == 0 {
             let identities = searchReturn as! [SecIdentity]
@@ -102,7 +102,7 @@ extension WebViewController {
                     certs.append(myCert!)
                 }
             }
-            
+
             panel?.setAlternateButtonTitle("cancel")
             panel?.runModal(forIdentities: identities, message: "Choose wisely...")
             if let identity = panel?.identity() {

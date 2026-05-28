@@ -18,10 +18,10 @@ class EULAViewController: NSViewController {
     @IBOutlet weak var cancelButton: NSButton!
     @IBOutlet weak var continueButton: NSButton!
     @IBOutlet weak var agreeCheck: NSButton!
-    
+
     var pathToPlistDefault = "/Users/Shared/UserInput.plist"
     var plistPath = ""
-    
+
     let defaultEULA = """
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tincidunt ex at lectus pretium, a gravida mi iaculis. Donec neque nisi, sollicitudin at metus at, viverra blandit diam. Nullam pharetra feugiat lacus, eu faucibus justo aliquet vel. Nunc euismod rhoncus purus, vitae imperdiet magna eleifend eget. In ac bibendum elit, eget finibus lectus. Integer tincidunt malesuada neque, id auctor erat lacinia non. Nunc venenatis quam at ornare cursus. Cras in eros rhoncus, imperdiet odio varius, imperdiet dolor. Aenean convallis tempor maximus. Pellentesque at ipsum turpis.
 
@@ -33,33 +33,33 @@ Suspendisse nec velit sed magna auctor accumsan ac eget nisi. Integer consectetu
 
 Ut molestie arcu ligula, et porttitor ex facilisis dapibus. Vivamus molestie lectus ut tempor condimentum. Nullam ullamcorper metus sit amet hendrerit varius. Interdum et malesuada fames ac ante ipsum primis in faucibus. Vestibulum erat quam, posuere ac sollicitudin nec, rhoncus ac ipsum. Donec quis nulla est. In semper porta orci lacinia efficitur. Duis libero est, pharetra id sapien euismod, convallis condimentum massa. Sed tellus urna, lobortis sit amet nunc a, feugiat auctor lorem. Sed mattis, tellus non ultrices sodales, metus arcu lacinia ipsum, id dignissim arcu odio nec neque. Aenean a nunc sit amet massa malesuada rutrum id non sem. Praesent non luctus magna. Sed ultrices lacinia sodales. Aenean mattis blandit ex, eget egestas ligula aliquam eget.
 """
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         // Get path to user plist file
-        if let pathToPlistFileValue = UserDefaults.standard.string(forKey: "pathToPlistFile"){
+        if let pathToPlistFileValue = UserDefaults.standard.string(forKey: "pathToPlistFile") {
             plistPath = pathToPlistFileValue
         } else {
             plistPath = pathToPlistDefault
         }
-        
+
         // Get EULA texts from Preferences file
         if let pathToEULA = UserDefaults.standard.string(forKey: "pathToEULA") {
-            
+
             // Get eula file extension
             let fileExtension = NSURL(fileURLWithPath: pathToEULA).pathExtension
-            
+
             // Check if eula file exists
             if FileManager.default.fileExists(atPath: pathToEULA) {
-            
+
                 do {
                 // Get Plain Text Contents
                 if fileExtension == "txt" {
                     let eula = try NSString(contentsOfFile: pathToEULA, encoding: String.Encoding.utf8.rawValue)
                     NSLog(pathToEULA)
                     eulaContent.string = eula as String
-                
+
                 // Get Rich Text Contents
                 } else if fileExtension == "rtf" {
                     // Get the contents
@@ -68,27 +68,26 @@ Ut molestie arcu ligula, et porttitor ex facilisis dapibus. Vivamus molestie lec
                     eulaContent.textStorage?.setAttributedString(eula!)
 
                 }
-            }
-            catch let error as NSError {
+            } catch let error as NSError {
                 NSLog("No terms file found: \(error)")
                 eulaContent.string = defaultEULA
             }
-            
+
         } else {
             // set the EULA text to a placeholder
             eulaContent.string = defaultEULA
         }
         }
-        
+
         // Get the EULA Main Title Window from Preferences file
-        if let EULAMainTitle = UserDefaults.standard.string(forKey: "EULAMainTitle"){
+        if let EULAMainTitle = UserDefaults.standard.string(forKey: "EULAMainTitle") {
             eulaTitle.stringValue = EULAMainTitle
         } else {
             NSLog("No EULA Title in Preferences file")
         }
-        
+
         // Get the EULA Subtitle Window from Preferences file
-        if let EULASubTitle = UserDefaults.standard.string(forKey: "EULASubTitle"){
+        if let EULASubTitle = UserDefaults.standard.string(forKey: "EULASubTitle") {
             eulaSubTitle.stringValue = EULASubTitle
         } else {
             NSLog("No EULA Subtitle in Preferences file")
@@ -103,7 +102,7 @@ Ut molestie arcu ligula, et porttitor ex facilisis dapibus. Vivamus molestie lec
             NSLog("BOM file create")
         }
     }
-    
+
     func getSystemUUID() -> String? {
         let dev = IOServiceMatching("IOPlatformExpertDevice")
         let platformExpert: io_service_t = IOServiceGetMatchingService(kIOMasterPortDefault, dev)
@@ -115,7 +114,7 @@ Ut molestie arcu ligula, et porttitor ex facilisis dapibus. Vivamus molestie lec
         }
         return nil
     }
-    
+
     func getSystemSerial() -> String? {
         let dev = IOServiceMatching("IOPlatformExpertDevice")
         let platformExpert: io_service_t = IOServiceGetMatchingService(kIOMasterPortDefault, dev)
@@ -127,69 +126,64 @@ Ut molestie arcu ligula, et porttitor ex facilisis dapibus. Vivamus molestie lec
         }
         return nil
     }
-    
 
     //
     // Button Functions
     //
-    
+
     @IBAction func agreeButton(_ sender: Any) {
         if continueButton.isEnabled == false {
             do {
                 continueButton.isEnabled = true}
-        }
-        else {
+        } else {
             continueButton.isEnabled = false
         }
-     
+
     }
-    
+
     @IBAction func cancelButtonAction(_ sender: Any) {
         NotificationCenter.default.post(name: enableContinueButton, object: self)
         self.view.window?.close()
     }
-    
+
     @IBAction func continueButtonAction(_ sender: Any) {
         // EULA Domain Keys
         let eulaDomainKey = "EULA Agreed"
-        
+
         // Get EULA Acceptance
         let userHasAgreedToEULA = true
-        
+
         // Get System wide UUID and Serial Number
         let systemUUIDValue = getSystemUUID()
         let systemSerialValue = getSystemSerial()
-        
+
         // Get current time and date to create a timestamp
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-mm-dd HH:mm:ss"
         dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         let LastRegistrationDate = dateFormatter.string(from: Date())
         NSLog(LastRegistrationDate)
-        
-        
+
         // If User input plist file exists append content
         if FileManager.default.fileExists(atPath: plistPath) {
             let plistContent = NSMutableDictionary(contentsOfFile: plistPath)!
-            
+
             plistContent.setValue(userHasAgreedToEULA, forKey: eulaDomainKey)
             plistContent.setValue(systemSerialValue!, forKey: "Computer Serial")
             plistContent.setValue(systemUUIDValue!, forKey: "Computer UUID")
             plistContent.setValue(LastRegistrationDate, forKey: "Registration Date")
-            
+
             plistContent.write(toFile: plistPath, atomically: true)
             NSLog("Is Plist file created: Yes")
             writeBomFile()
             self.view.window?.close()
-        }
-            
-        else {
+        } else {
             // Else create a new user input plist file
-            let userInputDictionary : [String: Any] = [
+            let userInputDictionary: [String: Any] = [
                 eulaDomainKey: userHasAgreedToEULA,
                 "Computer Serial": systemSerialValue!,
                 "Computer UUID": systemUUIDValue!,
-                "Registration Date": LastRegistrationDate,
+                "Registration Date": LastRegistrationDate
                 ]
             let dataToWrite = NSDictionary(dictionary: userInputDictionary)
             let dataWritten = dataToWrite.write(toFile: plistPath, atomically: true)
@@ -197,7 +191,7 @@ Ut molestie arcu ligula, et porttitor ex facilisis dapibus. Vivamus molestie lec
             writeBomFile()
             self.view.window?.close()
         }
-     
+
     }
-    
+
 }

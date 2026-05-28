@@ -6,6 +6,12 @@
 **Changed:**
 * Minimum supported macOS bumped to **11.0 (Big Sur)**. The old 10.12 deployment target was below Xcode 26's supported minimum and forced the Swift standard libraries to be embedded in the bundle (~14 MB of dead weight, since Swift has shipped in the OS since 10.14.4). Result: bundle size drops from ~15 MB to ~1.5 MB.
 
+**Fixed:**
+* Notification observer leak in `TrackProgress.runTask()`. The `dataAvailable` and `dataReady` observers were typed as implicitly unwrapped optionals and passed directly into `NotificationCenter.removeObserver(_:)`. Because `removeObserver` takes `Any`, the IUO was wrapped in `Optional<NSObjectProtocol>` rather than unwrapped, so deregistration silently failed. Every spawn of `runTask()` left two observers firing indefinitely.
+
+**Maintenance:**
+* Mechanical formatting pass via `swiftlint --fix` across the module. No behavior changes.
+
 # [1.1.7] - Mar 7, 2021
 
 **Added:**

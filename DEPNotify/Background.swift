@@ -27,5 +27,5 @@ class Background: NSWindowController {
         self.window?.orderBack(self)
         print("going back")
     }
-    
+
 }
